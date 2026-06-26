@@ -28,7 +28,7 @@ def view_patient(patient_id:str=Path(...,description='ID of the patient in the D
     raise HTTPException(status_code=404,detail='patient not found')
 
 @app.get('/sort')
-def sort_patients(sort_by:str=Query(..., description='sort on the basis of height,weightor bmi'),order:str=Query('asc', description='sort asc and desc order')):
+def sort_patients(sort_by:str=Query(..., description='sort on the basis of height,weight or bmi'),order:str=Query('asc', description='sort asc and desc order')):
         vaild_fields=['height','weight','bmi','age']
         if sort_by not in vaild_fields:
             raise HTTPException(status_code=400,detail='invalid field selected from {valid_fields}')
