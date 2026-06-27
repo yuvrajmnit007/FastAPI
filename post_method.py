@@ -5,11 +5,22 @@ from typing import Annotated,Literal,Optional
 import json 
 app=FastAPI()
 
+
+
+class Address(BaseModel):
+    city: Annotated[str, Field(..., description="Enter Your City Name", examples=["Jaipur"])]
+    state: Annotated[str, Field(..., description="Enter Your State Name", examples=["Rajasthan"])]
+    pin: Annotated[str, Field(..., description="Enter PIN Code", examples=["302017"])]
+
+
+
+
+    
 #lets make a pydantic class which will provide us pid,name,city,height,weight and we will calculate the bmi and verdict and post the data 
 class patient_add(BaseModel):
-    id: Annotated[str, Field(..., description='ID of the patient', examples=['P001'])]
-    name: Annotated[Optional[str], Field(default=None)]
-    city: Annotated[Optional[str], Field(default=None)]
+    id: Annotated[str, Field(..., description='ID of the patient', examples=['P001'])] #here ... means this field is required to post the data 
+    name: Annotated[Optional[str], Field(default=None)]  #Annotated -> it is an feature from pythons typing module which allows us to add meta data 
+    address: Annotated[Optional[Address], Field(default=None)]
     age: Annotated[Optional[int], Field(default=None, gt=0)]
     gender: Annotated[Optional[Literal['male', 'female']], Field(default=None)]
     height: Annotated[Optional[float], Field(default=None, gt=0)]
@@ -36,6 +47,9 @@ class patient_add(BaseModel):
             return 'overweight'
         else :
             return 'obese'
+        
+
+
 
 # it is to laod the data from the json file
 def load_data():
@@ -61,7 +75,7 @@ def view():
     return data
 
 @app.get('/patient/{patient_id}')
-def view_patient(patient_id:str=Path(...,description='ID of the patient in the DB',example='P001')):
+def view_patient(patient_id:str=Path(...,description='ID of the patient in the DB',examples='P001')):
     data=load_data()
     if patient_id in data :
         return data[patient_id]
@@ -87,6 +101,7 @@ def sort_patients(sort_by:str=Query(..., description='sort on the basis of heigh
 @app.post('/create')
 def create_patient(patient:patient_add):
     #load the existing data 
+
 
     data=load_data()
 
